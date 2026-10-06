@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Spider-Man · Şehir Devriyesi</title>
+<meta name="description" content="Birinci şahıs 3D şehir devriyesi. Ağla sallan, duvarlara tırman ve şehri çetelerden kurtar.">
+<link rel="icon" href="favicon.svg"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="world" aria-label="Birinci şahıs şehir oyunu"></canvas>
+<div id="vignette"></div><div id="damage"></div>
+<main id="hud" class="hidden">
+ <header><div class="brand"><i>✳</i><div><b>SPIDER-MAN</b><span>ŞEHİR DEVRİYESİ</span></div></div><div class="top-actions"><button id="sound" title="Sesi aç veya kapat" aria-label="Sesi aç veya kapat">SES AÇIK</button><button id="pause" title="Oyunu duraklat">Ⅱ</button></div></header>
+ <div class="status"><div class="health-label"><b id="hp-number">100</b><span>CAN</span></div><div class="health-track"><div id="hp"></div></div><div class="web-meter"><span>AĞ</span><div><i id="webfill"></i></div><b id="webcount">100</b></div></div>
+ <section class="objective"><div class="objective-kicker">AKTİF GÖREV <span id="mission-count">01 / 04</span></div><h2 id="mission-title">Sokakları geri al</h2><p id="mission-desc">Kırmızı işarete ulaş. Çeteyi etkisiz hâle getir.</p><div class="objective-bottom"><span id="enemy-count">0 / 4 düşman</span><b id="distance">150 m</b></div></section>
+ <div id="crosshair"><span></span></div><div id="aimhint"></div><div id="enemyhud" class="hidden"><b id="enemyname"></b><div><i id="enemyhp"></i></div></div>
+ <div id="combo" class="hidden"><b>×<span id="combo-count">1</span></b><span>KOMBO</span></div>
+ <div id="toast" role="status" aria-live="polite"></div>
+ <div class="telemetry"><div><b id="speed">0</b><span>KM/SA</span></div><i></i><div><b id="altitude">0</b><span>METRE</span></div><div id="state">ÇATIDA</div></div>
+ <div class="radar"><div class="radar-label">ŞEHİR RADARI <span>K</span></div><canvas id="map" width="216" height="216"></canvas><div class="radar-foot"><i></i> Çete bölgesi</div></div>
+ <div class="keys"><span><kbd>W A S D</kbd> Hareket</span><span><kbd>SAĞ TIK / E</kbd> Ağla sallan</span><span><kbd>R</kbd> Ağla çekil</span><span><kbd>SOL TIK</kbd> Ağ at</span><span><kbd>F</kbd> Yumruk</span><span><kbd>SPACE</kbd> Zıpla / tırman</span></div>
+</main>
+<div id="mobile" class="hidden"><div id="stick"><div id="sticknub"></div></div><div class="mobile-look-note" id="looknote">Sağ tarafta kaydırarak bak</div><div class="touch-actions"><button data-action="zip" class="small">ÇEKİL</button><button data-action="punch" class="small">VUR</button><button data-action="jump" class="small">ZIPLA</button><button data-action="swing" class="swing">AĞ<br><small>SALLAN</small></button><button data-action="shoot" class="shoot">AĞ AT</button><button data-action="dodge" class="small">KAÇIN</button></div></div>
+<div id="overlay" class="overlay">
+ <div class="start-content"><div class="eyebrow"><span></span> BRBRS GAMES <em>FAN OYUNU · v1.0</em></div><h1>SPIDER<span>MAN</span></h1><h2>ŞEHİR DEVRİYESİ</h2><p class="intro">Şehir ayaklarının altında.<br>Ağını at. Yüksel. Sokakları geri al.</p><div class="start-buttons"><button id="start" class="primary">DEVRİYEYE ÇIK <span>▶</span></button><button id="helpbtn" class="secondary">KONTROLLER</button></div><div class="start-meta"><span>1. ŞAHIS</span><i></i><span>3D AÇIK ŞEHİR</span><i></i><span>4 GÖREV</span></div><div class="options"><label>Görsel kalite <select id="quality"><option value="auto">Otomatik</option><option value="high">Yüksek</option><option value="low">Performans</option></select></label><label>Bakış hassasiyeti <input id="sensitivity" type="range" min="30" max="160" value="75"></label></div><p id="loading">Şehir hazırlanıyor…</p></div>
+ <div class="start-side"><span>GÜN BATIMI</span><b>18:42</b><i></i><p>DOWNTOWN<br>METRO BÖLGESİ</p></div>
+ <div class="start-bottom"><span>SPIDER-MAN · ŞEHİR DEVRİYESİ</span><span>Hayran yapımı bağımsız prototip</span></div>
+</div>
+<div id="pauseoverlay" class="overlay hidden"><div class="pause-card"><div class="eyebrow">DEVRİYE DURAKLATILDI</div><h2>Bir nefes al.</h2><p>Ağla sallanmak için bir binaya doğru bakıp E'yi veya sağ tıkı basılı tut. Bıraktığında hızını korursun.</p><button id="resume" class="primary">DEVAM ET ▶</button><button id="restart" class="secondary">GÖREVLERİ YENİDEN BAŞLAT</button><button id="pausehelp" class="secondary">KONTROLLER</button></div></div>
+<div id="help" class="modal hidden"><div class="help-card"><button id="closehelp" aria-label="Kapat">×</button><h2>Örümcek refleksleri</h2><div class="control-list"><div><kbd>W A S D</kbd><span>Hareket et · Shift ile koş</span></div><div><kbd>FARE</kbd><span>Etrafına bak</span></div><div><kbd>SAĞ TIK / E</kbd><span>Binaya bak, basılı tut ve sallan. Bırakınca ağ kopar.</span></div><div><kbd>R</kbd><span>Baktığın binaya ağla kendini çek</span></div><div><kbd>SOL TIK</kbd><span>Düşmana ağ at · 3 isabet düşmanı sarar</span></div><div><kbd>F</kbd><span>Yakındaki düşmana yumruk at</span></div><div><kbd>SPACE</kbd><span>Zıpla · Duvarın yanında basılı tutarak tırman</span></div><div><kbd>Q</kbd><span>Yana kaçın · Kırmızı uyarı geldiğinde kullan</span></div><div><kbd>ESC / P</kbd><span>Oyunu duraklat</span></div></div><p>Telefonda sol çubukla hareket et, sağ tarafta kaydırarak bak. Mavi nişangâh ağın bir binaya tutunabileceğini gösterir. Can ve ağ zamanla yenilenir. Yüksekten düşmek can götürmez.</p></div></div>
+<div id="end" class="overlay hidden"><div class="pause-card"><div class="eyebrow" id="endlabel">GÖREV TAMAMLANDI</div><h2 id="endtitle">Şehrin kahramanı.</h2><p id="enddesc">Üç çeteyi ve liderlerini durdurdun.</p><div id="endstats"></div><button id="replay" class="primary">YENİDEN OYNA ▶</button><button id="freeroam" class="secondary">SERBEST DEVRİYEYE DEVAM ET</button></div></div>
+<script src="three.js"></script><script src="game.js"></script>
+</body></html>
